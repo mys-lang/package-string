@@ -36,6 +36,10 @@ class StringBuilder:
         self += str(data)
 
     def to_string(self) -> string:
+        """Returns a string of current data.
+
+        """
+
         return "".join([str(ch) for ch in self._data])
 
     def __len__(self) -> u64:
@@ -46,6 +50,10 @@ class StringBuilder:
         return u64(len(self._data))
 
     def clear(self):
+        """Clear everything.
+
+        """
+
         self._data = []
 
     def clear_from(self, offset: u64):
