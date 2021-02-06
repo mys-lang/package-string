@@ -5,6 +5,9 @@ class StringBuilder:
         self._data = []
 
     def __iadd__(self, data: string):
+        if data is None:
+            return
+
         for ch in data:
             self += ch
 
@@ -63,6 +66,46 @@ class StringBuilder:
 
         while len(self) > offset:
             self._data.pop()
+
+class StringReader:
+    _data: string
+    _pos: u64
+
+    def __init__(self, data: string):
+        if data is None:
+            data = ""
+
+        self._data = data
+        self._pos = 0
+
+    def available(self) -> u64:
+        return len(self._data) - self._pos
+
+    def get(self) -> char:
+        if self.available() == 0:
+            return ''
+
+        self._pos += 1
+
+        return self._data[self._pos - 1]
+
+    def peek(self) -> char:
+        if self.available() == 0:
+            return ''
+
+        return self._data[self._pos]
+
+    def read(self, size: i64 = -1) -> string:
+        if self.available() == 0:
+            data = ""
+        elif size == -1:
+            data = self._data[self._pos:]
+            self._pos = len(self._data)
+        else:
+            data = self._data[i64(self._pos):i64(self._pos) + size]
+            self._pos += len(data)
+
+        return data
 
 @test
 def test_empty():
@@ -127,3 +170,24 @@ def test_clear_from_and_length():
     numbers += "apa"
     assert numbers.to_string() == "apa"
     assert len(numbers) == 3
+
+@test
+def test_empty_string_reader():
+    reader = StringReader("")
+    assert reader.get() == ''
+    assert reader.read(1) == ""
+    assert reader.read() == ""
+
+@test
+def test_string_reader():
+    reader = StringReader("kalle kula")
+    assert reader.peek() == 'k'
+    assert reader.get() == 'k'
+    assert reader.get() == 'a'
+    assert reader.read(3) == "lle"
+    assert reader.get() == ' '
+    assert reader.read() == "kula"
+    assert reader.get() == ''
+    assert reader.peek() == ''
+    assert reader.read() == ""
+    assert reader.read(100) == ""
