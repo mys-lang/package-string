@@ -1,44 +1,60 @@
 class StringBuilder:
-    _parts: [string]
+    _data: [char]
 
     def __init__(self):
-        self._parts = []
+        self._data = []
 
     def __iadd__(self, data: string):
-        self._parts.append(data)
+        for ch in data:
+            self += ch
 
     def __iadd__(self, data: char):
-        self._parts.append(str(data))
+        self._data.append(data)
 
     def __iadd__(self, data: i8):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: i16):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: i32):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: i64):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: u8):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: u16):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: u32):
-        self._parts.append(str(data))
+        self += str(data)
 
     def __iadd__(self, data: u64):
-        self._parts.append(str(data))
+        self += str(data)
 
     def to_string(self) -> string:
-        return "".join(self._parts)
+        return "".join([str(ch) for ch in self._data])
+
+    def __len__(self) -> u64:
+        """Get current string length.
+
+        """
+
+        return u64(len(self._data))
 
     def clear(self):
-        self._parts = []
+        self._data = []
+
+    def clear_from(self, offset: u64):
+        """Clear everything after given offset.
+
+        """
+
+        while u64(len(self)) > offset:
+            self._data.pop()
 
 @test
 def test_empty():
@@ -77,3 +93,29 @@ def test_clear():
 
     numbers.clear()
     assert numbers.to_string() == ""
+
+@test
+def test_clear_from_and_length():
+    numbers = StringBuilder()
+    assert len(numbers) == 0
+    numbers.clear_from(1)
+    assert len(numbers) == 0
+
+    numbers += "foo"
+    assert numbers.to_string() == "foo"
+    assert len(numbers) == 3
+
+    numbers.clear_from(1)
+    assert numbers.to_string() == "f"
+    assert len(numbers) == 1
+
+    numbers += "a"
+    assert numbers.to_string() == "fa"
+
+    numbers.clear_from(0)
+    assert numbers.to_string() == ""
+    assert len(numbers) == 0
+
+    numbers += "apa"
+    assert numbers.to_string() == "apa"
+    assert len(numbers) == 3
