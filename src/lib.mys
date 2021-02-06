@@ -47,7 +47,7 @@ class StringBuilder:
 
         """
 
-        return u64(len(self._data))
+        return len(self._data)
 
     def clear(self):
         """Clear everything.
@@ -61,7 +61,7 @@ class StringBuilder:
 
         """
 
-        while u64(len(self)) > offset:
+        while len(self) > offset:
             self._data.pop()
 
 @test
