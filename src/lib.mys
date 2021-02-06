@@ -1,0 +1,79 @@
+class StringBuilder:
+    _parts: [string]
+
+    def __init__(self):
+        self._parts = []
+
+    def __iadd__(self, data: string):
+        self._parts.append(data)
+
+    def __iadd__(self, data: char):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: i8):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: i16):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: i32):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: i64):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: u8):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: u16):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: u32):
+        self._parts.append(str(data))
+
+    def __iadd__(self, data: u64):
+        self._parts.append(str(data))
+
+    def to_string(self) -> string:
+        return "".join(self._parts)
+
+    def clear(self):
+        self._parts = []
+
+@test
+def test_empty():
+    assert StringBuilder().to_string() == ""
+
+@test
+def test_append():
+    numbers = StringBuilder()
+    numbers += "string"
+    numbers += " "
+    numbers += i8(-1)
+    numbers += " "
+    numbers += i16(-2)
+    numbers += " "
+    numbers += i32(-3)
+    numbers += " "
+    numbers += i64(-4)
+    numbers += " "
+    numbers += u8(1)
+    numbers += " "
+    numbers += u16(2)
+    numbers += " "
+    numbers += u32(3)
+    numbers += " "
+    numbers += u64(4)
+    numbers += " "
+    numbers += 'C'
+
+    assert numbers.to_string() == "string -1 -2 -3 -4 1 2 3 4 C"
+
+@test
+def test_clear():
+    numbers = StringBuilder()
+    numbers += "foo"
+    assert numbers.to_string() == "foo"
+
+    numbers.clear()
+    assert numbers.to_string() == ""
