@@ -1,3 +1,6 @@
+class StringError(Error):
+    message: string
+
 class StringBuilder:
     _data: [char]
 
@@ -85,6 +88,23 @@ class StringReader:
 
         return len(self._data) - self._pos
 
+    def seek(self, pos: u64):
+        """Seek given position relative to the beginning of the string.
+
+        """
+
+        if pos > len(self._data):
+            pos = len(self._data)
+
+        self._pos = pos
+
+    def tell(self) -> u64:
+        """Tell current position in the string.
+
+        """
+
+        return self._pos
+
     def get(self) -> char:
         """Get the next character.
 
@@ -130,6 +150,159 @@ class StringReader:
 
         if self._pos > 0:
             self._pos -= 1
+
+class _Pretty:
+    _builder: StringBuilder
+    _reader: StringReader
+    _width: u64
+    _indent: u64
+    _current_line_length: u64
+
+    def __init__(self, width: u64 = 80):
+        self._builder = StringBuilder()
+        self._reader = None
+        self._width = width
+
+    def _find_string_and_char_end(self, begin_ch: char):
+        while True:
+            ch = self._reader.get()
+
+            if ch == begin_ch:
+                break
+
+            if ch == '\\':
+                ch = self._reader.get()
+
+            if ch == '':
+                raise StringError(f"out of data when searching for '{begin_ch}'")
+
+    def _find_end(self, begin_ch: char, end_ch: char) -> u64:
+        begin_pos = self._reader.tell()
+        level = 1
+
+        while True:
+            ch = self._reader.get()
+
+            if ch == begin_ch:
+                level += 1
+            elif ch == end_ch:
+                level -= 1
+            elif ch == '"':
+                self._find_string_and_char_end(ch)
+            elif ch == '\'':
+                self._find_string_and_char_end(ch)
+            elif ch == '':
+                raise StringError(f"out of data when searching for '{end_ch}'")
+
+            if level == 0 and ch == end_ch:
+                break
+
+        end_pos = self._reader.tell()
+        self._reader.seek(begin_pos)
+
+        return end_pos - begin_pos
+
+    def _process_bracket_and_paren_begin(self, begin_ch: char, end_ch: char):
+        width = self._find_end(begin_ch, end_ch)
+
+        if (width + self._indent + self._current_line_length) < 80:
+            self._builder += begin_ch
+            self._builder += self._reader.read(i64(width))
+            self._current_line_length += width
+        else:
+            self._builder += begin_ch
+            self._builder += '\n'
+            self._current_line_length = 0
+            self._indent += 4
+            self._builder += "".join([" " for _ in range(i64(self._indent))])
+
+    def _process_bracket_begin(self):
+        self._process_bracket_and_paren_begin('[', ']')
+
+    def _process_bracket_end(self):
+        self._indent -= 4
+        self._builder += '\n'
+        self._builder += "".join([" " for _ in range(i64(self._indent))])
+        self._builder += ']'
+        self._current_line_length = 1
+
+    def _process_paren_begin(self):
+        self._process_bracket_and_paren_begin('(', ')')
+
+    def _process_paren_end(self):
+        self._indent -= 4
+        self._builder += ')'
+        self._current_line_length += 1
+
+    def _process_string_and_char(self, begin_ch: char):
+        self._builder += begin_ch
+
+        while True:
+            ch = self._reader.get()
+
+            if ch == begin_ch:
+                self._builder += ch
+                self._current_line_length += 1
+                break
+
+            if ch == '\\':
+                self._builder += ch
+                self._current_line_length += 1
+                ch = self._reader.get()
+
+            if ch == '':
+                raise StringError(f"out of data when searching for '{begin_ch}'")
+
+            self._builder += ch
+            self._current_line_length += 1
+
+    def _process_comma(self):
+        self._builder += ",\n"
+        self._current_line_length = 0
+        self._builder += "".join([" " for _ in range(i64(self._indent))])
+
+    def process(self, data: string) -> string:
+        self._builder.clear()
+        self._reader = StringReader(data)
+        self._indent = 0
+        self._current_line_length = 0
+
+        while True:
+            ch = self._reader.get()
+
+            match ch:
+                case '[':
+                    self._process_bracket_begin()
+                case ']':
+                    self._process_bracket_end()
+                case '(':
+                    self._process_paren_begin()
+                case ')':
+                    self._process_paren_end()
+                case '"':
+                    self._process_string_and_char(ch)
+                case '\'':
+                    self._process_string_and_char(ch)
+                case ',':
+                    self._process_comma()
+                case ' ':
+                    pass
+                case '':
+                    break
+                case _:
+                    self._builder += ch
+                    self._current_line_length += 1
+
+        return self._builder.to_string()
+
+def pretty(data: string) -> string:
+    """Try to make given object dump string pretty by inserting newlines
+    and indentations based on brackets, parentheses, strings,
+    characters and commas.
+
+    """
+
+    return _Pretty().process(data)
 
 @test
 def test_empty():
@@ -219,3 +392,109 @@ def test_string_reader():
     assert reader.available() == 1
     assert reader.get() == 'a'
     assert reader.get() == ''
+
+@test
+def test_pretty_tokens():
+    assert pretty(
+        "[ParenToken(value='('), NameToken(value=\"add\"), NumberToken(value=\"2\"),"
+        " ParenToken(value='('), NameToken(value=\"subtract\"), NumberToken(value=\""
+        "4\"), NumberToken(value=\"2\"), ParenToken(value=')'), ParenToken(value=')'"
+        ")]") == ("[\n"
+                  "    ParenToken(value='('),\n"
+                  "    NameToken(value=\"add\"),\n"
+                  "    NumberToken(value=\"2\"),\n"
+                  "    ParenToken(value='('),\n"
+                  "    NameToken(value=\"subtract\"),\n"
+                  "    NumberToken(value=\"4\"),\n"
+                  "    NumberToken(value=\"2\"),\n"
+                  "    ParenToken(value=')'),\n"
+                  "    ParenToken(value=')')\n"
+                  "]")
+
+@test
+def test_pretty_tokens_2():
+    assert pretty(
+        "[ParenToken(value='\\''), NameToken(value=\"add\"), NumberToken(value=\"2\"),"
+        " ParenToken(value='('), NameToken(value=\"subtract\"), NumberToken(value=\""
+        "4\"), NumberToken(value=\"2\"), ParenToken(value=')'), ParenToken(value=')'"
+        ")]") == ("[\n"
+                  "    ParenToken(value='\\''),\n"
+                  "    NameToken(value=\"add\"),\n"
+                  "    NumberToken(value=\"2\"),\n"
+                  "    ParenToken(value='('),\n"
+                  "    NameToken(value=\"subtract\"),\n"
+                  "    NumberToken(value=\"4\"),\n"
+                  "    NumberToken(value=\"2\"),\n"
+                  "    ParenToken(value=')'),\n"
+                  "    ParenToken(value=')')\n"
+                  "]")
+
+@test
+def test_pretty_ast():
+    assert pretty(
+        "ProgramNode(body=[CallExpressionNode(name=\"add\", params=[NumberLiteralNod"
+        "e(value=\"2\"), CallExpressionNode(name=\"subtract\", params=[NumberLiteral"
+        "Node(value=\"4\"), NumberLiteralNode(value=\"2\")])])])") == (
+            "ProgramNode(\n"
+            "    body=[\n"
+            "        CallExpressionNode(\n"
+            "            name=\"add\",\n"
+            "            params=[\n"
+            "                NumberLiteralNode(value=\"2\"),\n"
+            "                CallExpressionNode(\n"
+            "                    name=\"subtract\",\n"
+            "                    params=[\n"
+            "                        NumberLiteralNode(value=\"4\"),\n"
+            "                        NumberLiteralNode(value=\"2\")\n"
+            "                    ])\n"
+            "            ])\n"
+            "    ])")
+
+@test
+def test_pretty_ast_2():
+    assert pretty(
+        "ProgramNode(body=[CallExpressionNode(name=\"a[)\", params=[NumberLiteralNod"
+        "e(value=\"2\"), CallExpressionNode(name=\"subt'act\", params=[NumberLiteral"
+        "Node(value=\"4\")])])])") == (
+            "ProgramNode(\n"
+            "    body=[\n"
+            "        CallExpressionNode(\n"
+            "            name=\"a[)\",\n"
+            "            params=[\n"
+            "                NumberLiteralNode(value=\"2\"),\n"
+            "                CallExpressionNode(\n"
+            "                    name=\"subt'act\",\n"
+            "                    params=[NumberLiteralNode(value=\"4\")])\n"
+            "            ])\n"
+            "    ])")
+
+@test
+def test_pretty_long_string():
+    data = (
+        "\"12345678901234567890123456789012345678901234567890123456789012345678901"
+        "23456789012345678901234567890\"")
+    assert pretty(data) == data
+
+@test
+def test_pretty_long_name():
+    assert pretty(
+        "12345678901234567890123456789012345678901234567890123456789012345678901"
+        "23456789012345678901234567890()") == (
+            "1234567890123456789012345678901234567890123456789012345678901234567"
+            "890123456789012345678901234567890(\n"
+            "    )")
+
+@test
+def test_pretty_short():
+    data = "a(b=(1, 3, 'a'), c=[])"
+    assert pretty(data) == data
+
+@test
+def test_pretty_char_error():
+    try:
+        message = ""
+        pretty("'''")
+    except StringError as e:
+        message = e.message
+
+    assert message == "out of data when searching for '''"
