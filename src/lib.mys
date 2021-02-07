@@ -79,9 +79,17 @@ class StringReader:
         self._pos = 0
 
     def available(self) -> u64:
+        """Returns number of available characters.
+
+        """
+
         return len(self._data) - self._pos
 
     def get(self) -> char:
+        """Get the next character.
+
+        """
+
         if self.available() == 0:
             return ''
 
@@ -90,12 +98,20 @@ class StringReader:
         return self._data[self._pos - 1]
 
     def peek(self) -> char:
+        """Peek at the next character.
+
+        """
+
         if self.available() == 0:
             return ''
 
         return self._data[self._pos]
 
     def read(self, size: i64 = -1) -> string:
+        """Read zero or more characters. Give size as -1 to read everything.
+
+        """
+
         if self.available() == 0:
             data = ""
         elif size == -1:
@@ -106,6 +122,14 @@ class StringReader:
             self._pos += len(data)
 
         return data
+
+    def unget(self):
+        """Unget last character.
+
+        """
+
+        if self._pos > 0:
+            self._pos -= 1
 
 @test
 def test_empty():
@@ -191,3 +215,7 @@ def test_string_reader():
     assert reader.peek() == ''
     assert reader.read() == ""
     assert reader.read(100) == ""
+    reader.unget()
+    assert reader.available() == 1
+    assert reader.get() == 'a'
+    assert reader.get() == ''
