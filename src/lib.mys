@@ -2,6 +2,10 @@ class StringError(Error):
     message: string
 
 class StringBuilder:
+    """Easily create a string from strings and numbers.
+
+    """
+
     _data: [char]
 
     def __init__(self):
@@ -71,6 +75,10 @@ class StringBuilder:
             self._data.pop()
 
 class StringReader:
+    """A string reader.
+
+    """
+
     _data: string
     _pos: u64
 
@@ -106,7 +114,8 @@ class StringReader:
         return self._pos
 
     def get(self) -> char:
-        """Get the next character.
+        """Get the next character. Returns '' if there are no more characters
+        available.
 
         """
 
