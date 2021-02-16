@@ -22,6 +22,33 @@ A basic example that creates a string from numbers and strings.
 
        assert builder.to_string() == "Temperature: 5 C"
 
+String reader example
+=====================
+
+A basic example that uses the string reader class to get characters
+from a string.
+
+.. code-block:: python
+
+   from string import StringReader
+
+   def main():
+       reader = StringReader("kalle kula")
+       assert reader.peek() == 'k'
+       assert reader.get() == 'k'
+       assert reader.get() == 'a'
+       assert reader.read(3) == "lle"
+       assert reader.get() == ' '
+       assert reader.read() == "kula"
+       assert reader.get() == ''
+       assert reader.peek() == ''
+       assert reader.read() == ""
+       assert reader.read(100) == ""
+       reader.unget()
+       assert reader.available() == 1
+       assert reader.get() == 'a'
+       assert reader.get() == ''
+
 Functions and types
 ===================
 
