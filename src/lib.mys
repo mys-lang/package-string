@@ -12,6 +12,10 @@ class StringBuilder:
         self._data = []
 
     def __iadd__(self, data: string):
+        """Append given string.
+
+        """
+
         if data is None:
             return
 
@@ -19,30 +23,66 @@ class StringBuilder:
             self += ch
 
     def __iadd__(self, data: char):
+        """Append given character.
+
+        """
+
         self._data.append(data)
 
     def __iadd__(self, data: i8):
+        """Append given interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: i16):
+        """Append given interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: i32):
+        """Append given interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: i64):
+        """Append given interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: u8):
+        """Append given unsigned interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: u16):
+        """Append given unsigned interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: u32):
+        """Append given unsigned interger.
+
+        """
+
         self += str(data)
 
     def __iadd__(self, data: u64):
+        """Append given unsigned interger.
+
+        """
+
         self += str(data)
 
     def to_string(self) -> string:
