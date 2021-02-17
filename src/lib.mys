@@ -364,7 +364,7 @@ def indent(text: string, prefix: string = "    ") -> string:
     lines: [string] = []
 
     for line in text.split("\n"):
-        if line.is_space():
+        if line.is_space() or line == "":
             lines.append(line)
         else:
             lines.append(prefix + line)
