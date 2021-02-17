@@ -353,6 +353,24 @@ def pretty(data: string) -> string:
 
     return _Pretty().process(data)
 
+def indent(text: string, prefix: string = "    ") -> string:
+    """Add given prefix to the beginning of given lines.
+
+    The prefix is added to all lines that do not consist solely of
+    whitespace.
+
+    """
+
+    lines: [string] = []
+
+    for line in text.split("\n"):
+        if line.is_space():
+            lines.append(line)
+        else:
+            lines.append(prefix + line)
+
+    return "\n".join(lines)
+
 @test
 def test_empty():
     assert StringBuilder().to_string() == ""
@@ -547,3 +565,29 @@ def test_pretty_char_error():
         message = e.message
 
     assert message == "out of data when searching for '''"
+
+@test
+def tets_indent_empty_string():
+    assert indent("", "    ") == ""
+
+@test
+def tets_indent_ending_with_newline():
+    text = ("1\n"
+            "2\n"
+            "\n"
+            "4\n")
+    assert indent(text, "    ") == ("    1\n"
+                                    "    2\n"
+                                    "\n"
+                                    "    4\n")
+
+@test
+def tets_indent_whitespace_in_line():
+    text = ("\t\n"
+            "1\n"
+            " \n"
+            "4")
+    assert indent(text, "XXX") == ("\t\n"
+                                   "XXX1\n"
+                                   " \n"
+                                   "XXX4")
