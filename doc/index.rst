@@ -51,8 +51,8 @@ from a string.
        assert reader.get() == 'a'
        assert reader.get() == ''
 
-Functions and types
-===================
+API
+===
 
 .. mysfile:: src/lib.mys
 
