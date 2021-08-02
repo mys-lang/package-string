@@ -90,7 +90,10 @@ class StringBuilder:
 
         """
 
-        return "".join([str(ch) for ch in self._data])
+        print("1", flush=True)
+        a = [str(ch) for ch in self._data]
+        print("2", flush=True)
+        return "".join(a)
 
     def __len__(self) -> u64:
         """Get current string length.
@@ -591,3 +594,13 @@ def tets_indent_whitespace_in_line():
                                    "XXX1\n"
                                    " \n"
                                    "XXX4")
+
+@test
+def tets_big():
+    s = StringBuilder()
+
+    for _ in range(1000):
+        s += "0123456789"
+
+    print(len(s), flush=True)
+    print(len(s.to_string()), flush=True)

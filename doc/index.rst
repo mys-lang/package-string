@@ -1,4 +1,6 @@
+|discord|_
 |test|_
+|stars|_
 
 About
 =====
@@ -12,7 +14,7 @@ String builder example
 
 A basic example that creates a string from numbers and strings.
 
-.. code-block:: python
+.. code-block:: mys
 
    from string import StringBuilder
 
@@ -30,7 +32,7 @@ String reader example
 A basic example that uses the string reader class to get characters
 from a string.
 
-.. code-block:: python
+.. code-block:: mys
 
    from string import StringReader
 
@@ -56,7 +58,13 @@ API
 
 .. mysfile:: src/lib.mys
 
+.. |discord| image:: https://img.shields.io/discord/777073391320170507?label=Discord&logo=discord&logoColor=white
+.. _discord: https://discord.gg/GFDN7JvWKS
+
 .. |test| image:: https://github.com/mys-lang/package-string/actions/workflows/pythonpackage.yml/badge.svg
 .. _test: https://github.com/mys-lang/package-string/actions/workflows/pythonpackage.yml
+
+.. |stars| image:: https://img.shields.io/github/stars/mys-lang/package-string?style=social
+.. _stars: https://github.com/mys-lang/package-string
 
 .. _Mys programming language: https://mys-lang.org
