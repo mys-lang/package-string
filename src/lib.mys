@@ -90,9 +90,8 @@ class StringBuilder:
 
         """
 
-        print("1", flush=True)
         a = [str(ch) for ch in self._data]
-        print("2", flush=True)
+
         return "".join(a)
 
     def __len__(self) -> u64:
