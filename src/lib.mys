@@ -373,6 +373,41 @@ def indent(text: string, prefix: string = "    ") -> string:
 
     return "\n".join(lines)
 
+def join_or(items: [string]) -> string:
+    """Join all items in given list as "item1, item2, item3 or item4".
+
+    """
+
+    return _join_delimited(items, "or")
+
+def join_and(items: [string]) -> string:
+    """Join all items in given list as "item1, item2, item3 and item4".
+
+    """
+
+    return _join_delimited(items, "and")
+
+def _join_delimited(items: [string], last_delim: string) -> string:
+    if len(items) == 0:
+        return ""
+    elif len(items) == 1:
+        return items[0]
+    else:
+        joined = StringBuilder()
+
+        for i, item in enumerate(slice(items, 0, -1)):
+            if i > 0:
+                joined += ", "
+
+            joined += item
+
+        joined += ' '
+        joined += last_delim
+        joined += ' '
+        joined += items[-1]
+
+        return joined.to_string()
+
 @test
 def test_empty():
     assert StringBuilder().to_string() == ""
@@ -603,3 +638,21 @@ def tets_big():
 
     print(len(s), flush=True)
     print(len(s.to_string()), flush=True)
+
+@test
+def test_join_or():
+    assert join_or([]) == ""
+    assert join_or([""]) == ""
+    assert join_or(["a"]) == "a"
+    assert join_or(["a", "b"]) == "a or b"
+    assert join_or(["1", "2", "3"]) == "1, 2 or 3"
+    assert join_or(["1", "2", "3", "4"]) == "1, 2, 3 or 4"
+
+@test
+def test_join_and():
+    assert join_and([]) == ""
+    assert join_and([""]) == ""
+    assert join_and(["a"]) == "a"
+    assert join_and(["a", "b"]) == "a and b"
+    assert join_and(["1", "2", "3"]) == "1, 2 and 3"
+    assert join_and(["1", "2", "3", "4"]) == "1, 2, 3 and 4"
