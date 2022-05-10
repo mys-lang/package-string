@@ -18,7 +18,7 @@ A basic example that creates a string from numbers and strings.
 
    from string import StringBuilder
 
-   def main():
+   func main():
        builder = StringBuilder()
        builder += "Temperature: "
        builder += 5
@@ -36,7 +36,7 @@ from a string.
 
    from string import StringReader
 
-   def main():
+   func main():
        reader = StringReader("kalle kula")
        assert reader.peek() == 'k'
        assert reader.get() == 'k'
