@@ -408,12 +408,10 @@ func _join_delimited(items: [string], last_delim: string) -> string:
 
         return joined.to_string()
 
-@test
-func test_empty():
+test empty():
     assert StringBuilder().to_string() == ""
 
-@test
-func test_append():
+test append():
     numbers = StringBuilder()
     numbers += "string"
     numbers += " "
@@ -437,8 +435,7 @@ func test_append():
 
     assert numbers.to_string() == "string -1 -2 -3 -4 1 2 3 4 C"
 
-@test
-func test_clear():
+test clear():
     numbers = StringBuilder()
     numbers += "foo"
     assert numbers.to_string() == "foo"
@@ -446,8 +443,7 @@ func test_clear():
     numbers.clear()
     assert numbers.to_string() == ""
 
-@test
-func test_clear_from_and_length():
+test clear_from_and_length():
     numbers = StringBuilder()
     assert len(numbers) == 0
     numbers.clear_from(1)
@@ -472,15 +468,13 @@ func test_clear_from_and_length():
     assert numbers.to_string() == "apa"
     assert len(numbers) == 3
 
-@test
-func test_empty_string_reader():
+test empty_string_reader():
     reader = StringReader("")
     assert reader.get() == ''
     assert reader.read(1) == ""
     assert reader.read() == ""
 
-@test
-func test_string_reader():
+test string_reader():
     reader = StringReader("kalle kula")
     assert reader.peek() == 'k'
     assert reader.get() == 'k'
@@ -497,8 +491,7 @@ func test_string_reader():
     assert reader.get() == 'a'
     assert reader.get() == ''
 
-@test
-func test_pretty_tokens():
+test pretty_tokens():
     assert pretty(
         "[ParenToken(value='('), NameToken(value=\"add\"), NumberToken(value=\"2\"),"
         " ParenToken(value='('), NameToken(value=\"subtract\"), NumberToken(value=\""
@@ -515,8 +508,7 @@ func test_pretty_tokens():
                   "    ParenToken(value=')')\n"
                   "]")
 
-@test
-func test_pretty_tokens_2():
+test pretty_tokens_2():
     assert pretty(
         "[ParenToken(value='\\''), NameToken(value=\"add\"), NumberToken(value=\"2\"),"
         " ParenToken(value='('), NameToken(value=\"subtract\"), NumberToken(value=\""
@@ -533,8 +525,7 @@ func test_pretty_tokens_2():
                   "    ParenToken(value=')')\n"
                   "]")
 
-@test
-func test_pretty_ast():
+test pretty_ast():
     assert pretty(
         "ProgramNode(body=[CallExpressionNode(name=\"add\", params=[NumberLiteralNod"
         "e(value=\"2\"), CallExpressionNode(name=\"subtract\", params=[NumberLiteral"
@@ -554,8 +545,7 @@ func test_pretty_ast():
             "            ])\n"
             "    ])")
 
-@test
-func test_pretty_ast_2():
+test pretty_ast_2():
     assert pretty(
         "ProgramNode(body=[CallExpressionNode(name=\"a[)\", params=[NumberLiteralNod"
         "e(value=\"2\"), CallExpressionNode(name=\"subt'act\", params=[NumberLiteral"
@@ -572,15 +562,13 @@ func test_pretty_ast_2():
             "            ])\n"
             "    ])")
 
-@test
-func test_pretty_long_string():
+test pretty_long_string():
     data = (
         "\"12345678901234567890123456789012345678901234567890123456789012345678901"
         "23456789012345678901234567890\"")
     assert pretty(data) == data
 
-@test
-func test_pretty_long_name():
+test pretty_long_name():
     assert pretty(
         "12345678901234567890123456789012345678901234567890123456789012345678901"
         "23456789012345678901234567890()") == (
@@ -588,13 +576,11 @@ func test_pretty_long_name():
             "890123456789012345678901234567890(\n"
             "    )")
 
-@test
-func test_pretty_short():
+test pretty_short():
     data = "a(b=(1, 3, 'a'), c=[])"
     assert pretty(data) == data
 
-@test
-func test_pretty_char_error():
+test pretty_char_error():
     try:
         message = ""
         pretty("'''")
@@ -603,12 +589,10 @@ func test_pretty_char_error():
 
     assert message == "out of data when searching for '''"
 
-@test
-func tets_indent_empty_string():
+test indent_empty_string():
     assert indent("", "    ") == ""
 
-@test
-func tets_indent_ending_with_newline():
+test indent_ending_with_newline():
     text = ("1\n"
             "2\n"
             "\n"
@@ -618,8 +602,7 @@ func tets_indent_ending_with_newline():
                                     "\n"
                                     "    4\n")
 
-@test
-func tets_indent_whitespace_in_line():
+test indent_whitespace_in_line():
     text = ("\t\n"
             "1\n"
             " \n"
@@ -629,8 +612,7 @@ func tets_indent_whitespace_in_line():
                                    " \n"
                                    "XXX4")
 
-@test
-func tets_big():
+test big():
     s = StringBuilder()
 
     for _ in range(1000):
@@ -639,8 +621,7 @@ func tets_big():
     print(len(s), flush=True)
     print(len(s.to_string()), flush=True)
 
-@test
-func test_join_or():
+test join_or():
     assert join_or([]) == ""
     assert join_or([""]) == ""
     assert join_or(["a"]) == "a"
@@ -648,8 +629,7 @@ func test_join_or():
     assert join_or(["1", "2", "3"]) == "1, 2 or 3"
     assert join_or(["1", "2", "3", "4"]) == "1, 2, 3 or 4"
 
-@test
-func test_join_and():
+test join_and():
     assert join_and([]) == ""
     assert join_and([""]) == ""
     assert join_and(["a"]) == "a"
