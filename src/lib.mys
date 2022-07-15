@@ -99,7 +99,14 @@ class StringBuilder:
 
         """
 
-        return len(self._data)
+        return u64(self.length())
+
+    func length(self) -> i64:
+        """Get current string length.
+
+        """
+
+        return self._data.length()
 
     func clear(self):
         """Clear everything.
@@ -108,12 +115,12 @@ class StringBuilder:
 
         self._data = []
 
-    func clear_from(self, offset: u64):
+    func clear_from(self, offset: i64):
         """Clear everything after given offset.
 
         """
 
-        while len(self) > offset:
+        while self.length() > offset:
             self._data.pop()
 
 class StringReader:
@@ -122,7 +129,7 @@ class StringReader:
     """
 
     _data: string
-    _pos: u64
+    _pos: i64
 
     func __init__(self, data: string):
         if data is None:
@@ -131,24 +138,24 @@ class StringReader:
         self._data = data
         self._pos = 0
 
-    func available(self) -> u64:
+    func available(self) -> i64:
         """Returns number of available characters.
 
         """
 
-        return len(self._data) - self._pos
+        return self._data.length() - self._pos
 
-    func seek(self, pos: u64):
+    func seek(self, pos: i64):
         """Seek given position relative to the beginning of the string.
 
         """
 
-        if pos > len(self._data):
-            pos = len(self._data)
+        if pos > self._data.length():
+            pos = self._data.length()
 
         self._pos = pos
 
-    func tell(self) -> u64:
+    func tell(self) -> i64:
         """Tell current position in the string.
 
         """
@@ -187,10 +194,10 @@ class StringReader:
             data = ""
         elif size == -1:
             data = self._data[self._pos:]
-            self._pos = len(self._data)
+            self._pos = self._data.length()
         else:
-            data = self._data[i64(self._pos):i64(self._pos) + size]
-            self._pos += len(data)
+            data = self._data[self._pos:self._pos + size]
+            self._pos += data.length()
 
         return data
 
@@ -205,11 +212,11 @@ class StringReader:
 class _Pretty:
     _builder: StringBuilder
     _reader: StringReader
-    _width: u64
-    _indent: u64
-    _current_line_length: u64
+    _width: i64
+    _indent: i64
+    _current_line_length: i64
 
-    func __init__(self, width: u64 = 80):
+    func __init__(self, width: i64 = 80):
         self._builder = StringBuilder()
         self._reader = None
         self._width = width
@@ -227,7 +234,7 @@ class _Pretty:
             if ch == '':
                 raise StringError(f"out of data when searching for '{begin_ch}'")
 
-    func _find_end(self, begin_ch: char, end_ch: char) -> u64:
+    func _find_end(self, begin_ch: char, end_ch: char) -> i64:
         begin_pos = self._reader.tell()
         level = 1
 
@@ -388,9 +395,9 @@ func join_and(items: [string]) -> string:
     return _join_delimited(items, "and")
 
 func _join_delimited(items: [string], last_delim: string) -> string:
-    if len(items) == 0:
+    if items.length() == 0:
         return ""
-    elif len(items) == 1:
+    elif items.length() == 1:
         return items[0]
     else:
         joined = StringBuilder()
@@ -445,28 +452,28 @@ test clear():
 
 test clear_from_and_length():
     numbers = StringBuilder()
-    assert len(numbers) == 0
+    assert numbers.length() == 0
     numbers.clear_from(1)
-    assert len(numbers) == 0
+    assert numbers.length() == 0
 
     numbers += "foo"
     assert numbers.to_string() == "foo"
-    assert len(numbers) == 3
+    assert numbers.length() == 3
 
     numbers.clear_from(1)
     assert numbers.to_string() == "f"
-    assert len(numbers) == 1
+    assert numbers.length() == 1
 
     numbers += "a"
     assert numbers.to_string() == "fa"
 
     numbers.clear_from(0)
     assert numbers.to_string() == ""
-    assert len(numbers) == 0
+    assert numbers.length() == 0
 
     numbers += "apa"
     assert numbers.to_string() == "apa"
-    assert len(numbers) == 3
+    assert numbers.length() == 3
 
 test empty_string_reader():
     reader = StringReader("")
@@ -618,8 +625,8 @@ test big():
     for _ in range(1000):
         s += "0123456789"
 
-    print(len(s), flush=True)
-    print(len(s.to_string()), flush=True)
+    print(s.length(), flush=True)
+    print(s.to_string().length(), flush=True)
 
 test join_or():
     assert join_or([]) == ""
