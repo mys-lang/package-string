@@ -94,13 +94,6 @@ class StringBuilder:
 
         return "".join(a)
 
-    func __len__(self) -> u64:
-        """Get current string length.
-
-        """
-
-        return u64(self.length())
-
     func length(self) -> i64:
         """Get current string length.
 
