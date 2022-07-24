@@ -16,9 +16,6 @@ class StringBuilder:
 
         """
 
-        if data is None:
-            return
-
         for ch in data:
             self += ch
 
@@ -125,9 +122,6 @@ class StringReader:
     _pos: i64
 
     func __init__(self, data: string):
-        if data is None:
-            data = ""
-
         self._data = data
         self._pos = 0
 
@@ -204,7 +198,7 @@ class StringReader:
 
 class _Pretty:
     _builder: StringBuilder
-    _reader: StringReader
+    _reader: StringReader?
     _width: i64
     _indent: i64
     _current_line_length: i64
