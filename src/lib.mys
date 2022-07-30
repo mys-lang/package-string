@@ -11,7 +11,7 @@ class StringBuilder:
     func __init__(self):
         self._data = []
 
-    func __iadd__(self, data: string):
+    func +=(self, data: string):
         """Append given string.
 
         """
@@ -19,63 +19,63 @@ class StringBuilder:
         for ch in data:
             self += ch
 
-    func __iadd__(self, data: char):
+    func +=(self, data: char):
         """Append given character.
 
         """
 
         self._data.append(data)
 
-    func __iadd__(self, data: i8):
+    func +=(self, data: i8):
         """Append given interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: i16):
+    func +=(self, data: i16):
         """Append given interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: i32):
+    func +=(self, data: i32):
         """Append given interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: i64):
+    func +=(self, data: i64):
         """Append given interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: u8):
+    func +=(self, data: u8):
         """Append given unsigned interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: u16):
+    func +=(self, data: u16):
         """Append given unsigned interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: u32):
+    func +=(self, data: u32):
         """Append given unsigned interger.
 
         """
 
         self += str(data)
 
-    func __iadd__(self, data: u64):
+    func +=(self, data: u64):
         """Append given unsigned interger.
 
         """
